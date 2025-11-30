@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: homeassistant-app-c82f77a2
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: homeassistant
+  template:
+    metadata:
+      labels:
+        app: homeassistant
+    spec:
+      containers:
+        - image: homeassistant/home-assistant:sha256:88d08b12c87838955af7329040803f16a19f3ef62015300a7e1f894785e78883
+          name: app-container
+          ports:
+            - containerPort: 443
+          volumeMounts:
+            - mountPath: /config
+              name: automation_config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: homeassistant-service-c89ad277
+spec:
+  ports:
+    - name: HTTPS Access
+      nodePort: 443
+      port: 10443
+  selector:
+    app: homeassistant
+  type: LoadBalancer
